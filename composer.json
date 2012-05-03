@@ -13,6 +13,8 @@
   ],
   "require": {},
   "autoload": {
-    "psn-0": ["src/"]
+    "psr-0": {
+      "Freegli\\Component\\APNs": "src/"
+    }
   }
 }

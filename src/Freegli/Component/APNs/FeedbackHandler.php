@@ -57,7 +57,7 @@ class FeedbackHandler extends BaseHandler
     public function extract($binaryString)
     {
         $feedbacks = array();
-        foreach (str_split($binary, Feedback::LENGTH) as $binaryChunk) {
+        foreach (str_split($binaryString, Feedback::LENGTH) as $binaryChunk) {
             try {
                 $feedbacks[] = new Feedback($binaryChunk);
             } catch (\Exception $e) {

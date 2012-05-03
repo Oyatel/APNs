@@ -3,6 +3,7 @@
 namespace Freegli\Component\APNs;
 
 use Freegli\Component\APNs\Exception\LengthException;
+use Freegli\Component\APNs\Exception\ConvertException;
 
 /**
  * Error-response packet.

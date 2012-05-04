@@ -11,13 +11,13 @@ use Freegli\Component\APNs\Exception\ConvertException;
  */
 class Notification
 {
-    private $command;
-    private $identifier;
-    private $expiry;
-    private $tokenLength;
-    private $deviceToken;
-    private $payloadLength;
-    private $payload;
+    protected $command;
+    protected $identifier;
+    protected $expiry;
+    protected $tokenLength;
+    protected $deviceToken;
+    protected $payloadLength;
+    protected $payload;
 
     public function  __construct()
     {
@@ -56,17 +56,25 @@ class Notification
      */
     public function toBinary()
     {
+        $payload = $this->formatPayload();
+        error_log("Payload is: " . $payload);
+        $payload_length = strlen($payload);
+        $token_length = strlen($this->deviceToken);
+        if (($token_length % 2) == 1) {
+            throw new ConvertException('Invalid token length');
+        }
+        $binary_token_length = $token_length / 2;
+
         try {
-            return pack('CNNnH*',
-                    $this->command,
-                    $this->identifier,
-                    $this->expiry->format('U'),
-                    strlen($this->deviceToken),
-                    $this->deviceToken
-                )
-                .pack('n', strlen($this->formatPayload()))
-                .$this->formatPayload()
-           ;
+            $bin = // new: Command "1"
+                pack("C", $this->command) 
+                // new: Identifier "1111"
+                . pack("N", $this->identifier) 
+                // new: Expiry
+                . pack("N", $this->expiry->format('U'))
+                // old 
+                . chr(0) . chr($binary_token_length) . pack('H*', str_replace(' ', '', $this->deviceToken)) . chr(0) . chr(strlen($payload)) . $payload;
+            return $bin;
         } catch (\Exception $e) {
             throw new ConvertException('Unable to convert to binary', null, $e);
         }
@@ -77,7 +85,7 @@ class Notification
      *
      * @return string
      */
-    private function formatPayload()
+    protected function formatPayload()
     {
         //TODO handle error
         return json_encode($this->payload);

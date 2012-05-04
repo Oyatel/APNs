@@ -45,11 +45,13 @@ class NotificationHandler extends BaseHandler
     public function getErrors()
     {
         $errors = array();
-        foreach (str_split($this->fetchErrors(), ErrorResponse::LENGTH) as $binaryChunk) {
+        $errorsStrs = $this->fetchErrors();
+        foreach ($errorsStrs as $binaryChunk) {
             try {
                 $errors[] = new ErrorResponse($binaryChunk);
             } catch (\Exception $e) {
                 //do nothing
+                error_log("Got exception on parting error response: " . $e->getMessage());
             }
         }
 
@@ -59,10 +61,16 @@ class NotificationHandler extends BaseHandler
     /**
      * Get binary string from resource.
      *
-     * @return string
+     * @return string[]
      */
     private function fetchErrors()
     {
-        return stream_get_contents($this->getResource());
+        $errorBinStrings = array();
+        $binaryString = fread($this->getResource(), 6);
+    
+        if ($binaryString) {
+            $errorBinStrings[] = $binaryString;
+        }
+        return $errorBinStrings;
     }
 }

@@ -35,11 +35,10 @@ class ConnectionFactory
             stream_context_set_option($streamContext, 'ssl', 'passphrase', $this->certificatPassPhrase);
         }
 
-        try {
-            $connection = stream_socket_client($url, $errno, $errstr, 60, STREAM_CLIENT_CONNECT, $streamContext);
-        } catch (\Exception $e) {
-            throw new ConnectionException(sprintf('Unable to connect to "%s"', $url), null, $e);
-        }
+
+        $connection = stream_socket_client($url, $errno, $errstr, 60, STREAM_CLIENT_CONNECT, $streamContext);
+        stream_set_blocking($connection, 0);
+
         if ($connection === false) {
             throw new ConnectionException($errstr, $errno);
         }

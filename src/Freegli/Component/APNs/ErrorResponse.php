@@ -4,7 +4,6 @@ namespace Freegli\Component\APNs;
 
 use Freegli\Component\APNs\Exception\LengthException;
 use Freegli\Component\APNs\Exception\ConvertException;
-
 /**
  * Error-response packet.
  *
@@ -45,9 +44,13 @@ class ErrorResponse
             throw new LengthException();
         }
         try {
-            list ($this->command, $this->statusCode, $this->identifier) = unpack('CCN', $binaryString);
+            $error_pack = unpack('Ccommand/Cstatus_code/Nidentifier', $binaryString);
+            
+            $this->command = $error_pack['command'];
+            $this->statusCode = $error_pack['status_code'];
+            $this->identifier = $error_pack['identifier'];
         } catch (\Exception $e) {
-            throw new ConvertException('Unable to convert binary string to '.__CLASS__, null, $e);
+            throw new ConvertException('Unable to convert binary string to '.__CLASS__ . ": " . $e->getMessage(), null, $e);
         }
     }
 
@@ -58,7 +61,7 @@ class ErrorResponse
 
     public function getStatusCodeMessage()
     {
-        return self::$message[$this->statusCode];
+        return $this->errors[$this->statusCode];
     }
 
     public function getIdentifier()

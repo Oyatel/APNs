@@ -1,0 +1,20 @@
+{
+  "name": "oyatel/apns",
+  "description": "Apple Push Notification Service Component in PHP",
+  "authors": [
+    {
+      "name": "Xavier Briand",
+      "email": "xavierbriand@gmail.com"
+    },
+    {
+        "name": "Even Andre Fiskvik",
+        "email": "eaf@oyatel.com"
+    }
+  ],
+  "require": {},
+  "autoload": {
+    "psr-0": {
+      "Freegli\\Component\\APNs": "src/"
+    }
+  }
+}

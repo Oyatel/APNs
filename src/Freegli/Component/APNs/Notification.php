@@ -57,7 +57,6 @@ class Notification
     public function toBinary()
     {
         $payload = $this->formatPayload();
-        error_log("Payload is: " . $payload);
         $payload_length = strlen($payload);
         $token_length = strlen($this->deviceToken);
         if (($token_length % 2) == 1) {
